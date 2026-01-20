@@ -7,17 +7,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Install system dependencies
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install Java 17
         run: |
           sudo apt update
-          sudo apt install -y python3.10 python3.10-venv openjdk-17 zip unzip
+          sudo apt install -y openjdk-17-jdk zip unzip
 
       - name: Install Buildozer
         run: |
-          python3.10 -m pip install --upgrade pip
-          python3.10 -m pip install buildozer cython
+          python -m pip install --upgrade pip
+          python -m pip install cython buildozer
 
       - name: Build APK
         run: |
