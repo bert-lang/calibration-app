@@ -2,6 +2,8 @@
 title = Calibration Calculator
 package.name = calibration
 package.domain = org.calculator
+version = 1.0
+
 
 source.dir = .
 source.include_exts = py
