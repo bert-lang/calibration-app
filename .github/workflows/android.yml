@@ -26,7 +26,16 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install cython buildozer
 
-      - name: Build APK (Buildozer manages SDK)
+      - name: Force Buildozer Android SDK install (FIX AIDL)
+        env:
+          ANDROIDSDK: /home/runner/.buildozer/android/platform/android-sdk
+        run: |
+          buildozer android clean
+          yes | buildozer android update sdk
+
+      - name: Build APK
+        env:
+          ANDROIDSDK: /home/runner/.buildozer/android/platform/android-sdk
         run: |
           buildozer android debug
 
