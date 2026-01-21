@@ -2,33 +2,28 @@ name: Build APK
 
 on:
   push:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Remove GitHub preinstalled Android SDK (IMPORTANT)
-        run: |
-          unset ANDROID_HOME
-          unset ANDROID_SDK_ROOT
-          unset ANDROID_NDK_HOME
-          unset ANDROID_NDK
-
-      - name: Set up Python 3.10
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
-      - name: Install system dependencies
+      - name: Install Linux packages
         run: |
           sudo apt update
           sudo apt install -y \
             openjdk-17-jdk \
-            zip unzip git \
+            git zip unzip \
             build-essential \
             autoconf automake libtool pkg-config \
             libffi-dev libssl-dev zlib1g-dev \
@@ -41,7 +36,11 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install cython buildozer
 
-      - name: Build APK (Buildozer manages SDK/NDK)
+      - name: Build APK
+        env:
+          ANDROID_HOME: ""
+          ANDROID_SDK_ROOT: ""
+          ANDROID_NDK_HOME: ""
         run: |
           buildozer android debug
 
