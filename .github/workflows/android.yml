@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout repository
@@ -16,7 +16,7 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install system & build dependencies
+      - name: Install system dependencies
         run: |
           sudo apt update
           sudo apt install -y \
@@ -43,4 +43,4 @@ jobs:
         with:
           name: calibration-apk
           path: bin/*.apk
-
+          
