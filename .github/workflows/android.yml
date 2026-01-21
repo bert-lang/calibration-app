@@ -11,16 +11,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Java 17 (FORCE)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
       - name: Set up Python 3.10
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
+      - name: Verify Java version
+        run: |
+          java -version
+          echo "JAVA_HOME=$JAVA_HOME"
+
       - name: Install system dependencies
         run: |
           sudo apt update
           sudo apt install -y \
-            openjdk-17-jdk \
             zip unzip git \
             build-essential \
             autoconf automake libtool pkg-config \
@@ -29,7 +39,7 @@ jobs:
             libstdc++6 \
             libgl1-mesa-dev libgles2-mesa-dev
 
-      - name: Install Android SDK (FIXED STRUCTURE)
+      - name: Install Android SDK (Java 17 safe)
         run: |
           mkdir -p $HOME/android-sdk/cmdline-tools
           cd $HOME/android-sdk
@@ -42,16 +52,20 @@ jobs:
           mv cmdline-tools/lib cmdline-tools/latest/
           mv cmdline-tools/NOTICE.txt cmdline-tools/latest/
 
-          yes | cmdline-tools/latest/bin/sdkmanager --licenses
+          export ANDROID_SDK_ROOT=$HOME/android-sdk
+          export ANDROID_HOME=$HOME/android-sdk
+          export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
 
-          cmdline-tools/latest/bin/sdkmanager \
+          yes | sdkmanager --licenses
+
+          sdkmanager \
             "platform-tools" \
             "platforms;android-33" \
             "build-tools;33.0.2"
 
-          echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_PATH
 
       - name: Install Python tools (PIN CYTHON)
         run: |
@@ -71,4 +85,4 @@ jobs:
         with:
           name: calibration-apk
           path: bin/*.apk
-          
+
