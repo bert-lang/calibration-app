@@ -11,6 +11,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Remove GitHub preinstalled Android SDK (IMPORTANT)
+        run: |
+          unset ANDROID_HOME
+          unset ANDROID_SDK_ROOT
+          unset ANDROID_NDK_HOME
+          unset ANDROID_NDK
+
       - name: Set up Python 3.10
         uses: actions/setup-python@v5
         with:
@@ -34,7 +41,7 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install cython buildozer
 
-      - name: Build APK
+      - name: Build APK (Buildozer manages SDK/NDK)
         run: |
           buildozer android debug
 
