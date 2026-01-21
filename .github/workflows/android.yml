@@ -29,18 +29,21 @@ jobs:
             libstdc++6 \
             libgl1-mesa-dev libgles2-mesa-dev
 
-      - name: Install Android SDK (CORRECT STRUCTURE)
+      - name: Install Android SDK (FIXED STRUCTURE)
         run: |
-          mkdir -p $HOME/android-sdk
+          mkdir -p $HOME/android-sdk/cmdline-tools
           cd $HOME/android-sdk
 
           wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
           unzip -q commandlinetools-linux-*.zip
 
-          # Accept licenses
+          mkdir -p cmdline-tools/latest
+          mv cmdline-tools/bin cmdline-tools/latest/
+          mv cmdline-tools/lib cmdline-tools/latest/
+          mv cmdline-tools/NOTICE.txt cmdline-tools/latest/
+
           yes | cmdline-tools/latest/bin/sdkmanager --licenses
 
-          # Install required SDK components
           cmdline-tools/latest/bin/sdkmanager \
             "platform-tools" \
             "platforms;android-33" \
